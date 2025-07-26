@@ -20,31 +20,42 @@ public class ContactService {
             "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin",
             "Thompson", "Young", "King", "Robinson" };
 
-    private static ContactService instance;
+    private static volatile ContactService instance;
     private static final Map<Long, Contact> contacts = new HashMap<>();
-    private static long nextId = 0;
+    private static volatile long nextId = 0;
+
+    private ContactService() {
+        // Private constructor to enforce singleton pattern
+    }
 
     public static ContactService createDemoService() {
-        if (instance == null) {
-            instance = new ContactService();
-            
-            // Initialize demo data only if the contacts map is empty
-            if (contacts.isEmpty()) {
-                var r = new Random(0);
-                for (int i = 0; i < 100; i++) {
-                    var contact = new Contact();
-                    contact.setFirstName(fnames[r.nextInt(fnames.length)]);
-                    contact.setLastName(lnames[r.nextInt(fnames.length)]);
-                    contact.setEmail(contact.getFirstName().toLowerCase() + "@"
-                            + contact.getLastName().toLowerCase() + ".com");
-                    contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
-                    contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
-                            r.nextInt(11) + 1, r.nextInt(28) + 1));
-                    instance.save(contact);
+        ContactService result = instance;
+        if (result == null) {
+            synchronized (ContactService.class) {
+                result = instance;
+                if (result == null) {
+                    result = new ContactService();
+                    // Initialize demo data only if needed
+                    if (contacts.isEmpty()) {
+                        var r = new Random(0);
+                        for (int i = 0; i < 100; i++) {
+                            var contact = new Contact();
+                            contact.setFirstName(fnames[r.nextInt(fnames.length)]);
+                            contact.setLastName(lnames[r.nextInt(fnames.length)]);
+                            contact.setEmail(contact.getFirstName().toLowerCase() + "@"
+                                    + contact.getLastName().toLowerCase() + ".com");
+                            contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
+                            contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
+                                    r.nextInt(11) + 1, r.nextInt(28) + 1));
+                            contact.setId(nextId++);
+                            contacts.put(contact.getId(), contact);
+                        }
+                    }
+                    instance = result;
                 }
             }
         }
-        return instance;
+        return result;
     }
 
     public synchronized List<Contact> findAll(String stringFilter) {
