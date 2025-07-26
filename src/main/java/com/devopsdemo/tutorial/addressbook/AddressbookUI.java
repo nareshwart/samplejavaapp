@@ -17,13 +17,25 @@ import com.devopsdemo.tutorial.addressbook.backend.ContactService;
 @Route("/")
 public class AddressbookUI extends VerticalLayout {
 
-    final TextField filter = new TextField("Filter contacts...");
-    final Grid<Contact> contactList = new Grid<>(Contact.class);
-    final Button newContact = new Button("New contact");
-    final ContactForm contactForm = new ContactForm();
-    final ContactService service = ContactService.createDemoService();
-
+    protected TextField filter;
+    protected Grid<Contact> contactList;
+    protected Button newContact;
+    protected ContactForm contactForm;
+    private final ContactService service;
+    
     public AddressbookUI() {
+        this(ContactService.createDemoService());
+    }
+    
+    public AddressbookUI(ContactService service) {
+        this.service = service;
+        
+        // Initialize UI components
+        filter = new TextField("Filter contacts...");
+        contactList = new Grid<>(Contact.class);
+        newContact = new Button("New contact");
+        contactForm = new ContactForm();
+
         contactForm.setListener(new ContactForm.ContactFormListener() {
             @Override
             public void onSave() {

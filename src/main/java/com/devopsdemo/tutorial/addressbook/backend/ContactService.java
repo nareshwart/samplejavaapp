@@ -10,6 +10,7 @@ import java.util.logging.Logger;
  * Backend implementation for the address book application, with "detached entities"
  * simulating real-world DAO. Typically, these are provided by Java EE or Spring backend services.
  */
+@jakarta.enterprise.context.ApplicationScoped
 public class ContactService {
 
     private static final String[] fnames = { "Peter", "Alice", "John", "Mike", "Olivia",
