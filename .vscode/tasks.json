@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Java Project",
+			"type": "shell",
+			"command": "mvn clean install",
+			"group": "build",
+			"problemMatcher": [
+				"$maven-compiler"
+			],
+			"isBackground": false
+		}
+	]
+}

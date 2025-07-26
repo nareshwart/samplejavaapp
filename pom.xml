@@ -7,13 +7,13 @@
     <packaging>war</packaging>
     <version>2.0</version>
     <name>Vaadin Sampleapp example</name>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <vaadin.version>24.1.0</vaadin.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-	<jacoco.version>0.8.11</jacoco.version>
+        <vaadin.version>24.1.4</vaadin.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <jacoco.version>0.8.11</jacoco.version>
     </properties>
 
     <repositories>
@@ -74,14 +74,14 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -112,25 +112,21 @@
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
-                                        <!-- Line Coverage -->
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.50</minimum>
                                         </limit>
-                                        <!-- Branch Coverage -->
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.50</minimum>
                                         </limit>
-                                        <!-- Method Coverage -->
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.50</minimum>
                                         </limit>
-                                        <!-- Class Coverage -->
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>COVEREDRATIO</value>
@@ -139,7 +135,6 @@
                                     </limits>
                                 </rule>
                             </rules>
-                            <!-- Exclude Vaadin UI classes from coverage -->
                             <excludes>
                                 <exclude>com/devopsdemo/tutorial/addressbook/AddressbookUI*</exclude>
                             </excludes>

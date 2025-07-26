@@ -66,12 +66,14 @@ public class ContactForm extends FormLayout {
     }
 
     private void save() {
-        if (contact != null) {
-            binder.writeBeanIfValid(contact);
+        if (contact != null && binder.writeBeanIfValid(contact)) {
             if (isUIAvailable()) {
                 Notification.show(String.format("Saved '%s %s'.", contact.getFirstName(), contact.getLastName()));
             }
-            if (listener != null) listener.onSave();
+            if (listener != null) {
+                listener.onSave();
+            }
+            setVisible(false);
         }
     }
 

@@ -43,8 +43,8 @@ public class ContactService {
         return instance;
     }
 
-    private final Map<Long, Contact> contacts = new HashMap<>();
-    private long nextId = 0;
+    private static final Map<Long, Contact> contacts = new HashMap<>();
+    private static long nextId = 0;
 
     public synchronized List<Contact> findAll(String stringFilter) {
         var filteredContacts = new ArrayList<Contact>();

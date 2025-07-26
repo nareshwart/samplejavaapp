@@ -46,8 +46,8 @@ class ContactFormTest {
         contactForm.edit(contact);
         contactForm.save.click();
 
-        // Assuming save logic updates the UI or backend, validate the expected behavior here.
-        assertTrue(contactForm.isVisible());
+        // The form should be hidden after saving
+        assertFalse(contactForm.isVisible());
     }
 
     @Test
