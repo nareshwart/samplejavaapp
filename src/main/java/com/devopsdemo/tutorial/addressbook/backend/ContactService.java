@@ -22,14 +22,12 @@ public class ContactService {
             "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin",
             "Thompson", "Young", "King", "Robinson" };
 
-    private static Map<Long, Contact> contacts;
-    private static AtomicLong nextId;
-    private static ContactService instance;
+    private Map<Long, Contact> contacts;
+    private AtomicLong nextId;
     
-    static {
+    public ContactService() {
         contacts = Collections.synchronizedMap(new HashMap<>());
         nextId = new AtomicLong(0);
-        instance = new ContactService();
         var r = new Random(0);
         for (int i = 0; i < 100; i++) {
             Contact contact = new Contact();
@@ -45,12 +43,8 @@ public class ContactService {
         }
     }
 
-    private ContactService() {
-        // Private constructor
-    }
-
     public static ContactService createDemoService() {
-        return instance;
+        return new ContactService();
     }
 
     public List<Contact> findAll(String stringFilter) {

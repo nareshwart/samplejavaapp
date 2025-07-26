@@ -23,10 +23,7 @@ public class AddressbookUI extends VerticalLayout {
     protected ContactForm contactForm;
     private final ContactService service;
     
-    public AddressbookUI() {
-        this(ContactService.createDemoService());
-    }
-    
+    @jakarta.inject.Inject
     public AddressbookUI(ContactService service) {
         this.service = service;
         
@@ -35,6 +32,10 @@ public class AddressbookUI extends VerticalLayout {
         contactList = new Grid<>(Contact.class);
         newContact = new Button("New contact");
         contactForm = new ContactForm();
+    }
+    
+    public AddressbookUI() {
+        this(ContactService.createDemoService());
 
         contactForm.setListener(new ContactForm.ContactFormListener() {
             @Override
