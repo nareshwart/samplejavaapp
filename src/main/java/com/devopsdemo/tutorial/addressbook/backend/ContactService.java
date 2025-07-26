@@ -2,6 +2,7 @@ package com.devopsdemo.tutorial.addressbook.backend;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,45 +21,38 @@ public class ContactService {
             "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin",
             "Thompson", "Young", "King", "Robinson" };
 
-    private static volatile ContactService instance;
-    private static final Map<Long, Contact> contacts = new HashMap<>();
-    private static volatile long nextId = 0;
+    private static Map<Long, Contact> contacts;
+    private static AtomicLong nextId;
+    private static ContactService instance;
+    
+    static {
+        contacts = Collections.synchronizedMap(new HashMap<>());
+        nextId = new AtomicLong(0);
+        instance = new ContactService();
+        var r = new Random(0);
+        for (int i = 0; i < 100; i++) {
+            Contact contact = new Contact();
+            contact.setFirstName(fnames[r.nextInt(fnames.length)]);
+            contact.setLastName(lnames[r.nextInt(lnames.length)]);
+            contact.setEmail(contact.getFirstName().toLowerCase() + "@"
+                    + contact.getLastName().toLowerCase() + ".com");
+            contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
+            contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
+                    r.nextInt(11) + 1, r.nextInt(28) + 1));
+            contact.setId(nextId.getAndIncrement());
+            contacts.put(contact.getId(), contact);
+        }
+    }
 
     private ContactService() {
-        // Private constructor to enforce singleton pattern
+        // Private constructor
     }
 
     public static ContactService createDemoService() {
-        ContactService result = instance;
-        if (result == null) {
-            synchronized (ContactService.class) {
-                result = instance;
-                if (result == null) {
-                    result = new ContactService();
-                    // Initialize demo data only if needed
-                    if (contacts.isEmpty()) {
-                        var r = new Random(0);
-                        for (int i = 0; i < 100; i++) {
-                            var contact = new Contact();
-                            contact.setFirstName(fnames[r.nextInt(fnames.length)]);
-                            contact.setLastName(lnames[r.nextInt(fnames.length)]);
-                            contact.setEmail(contact.getFirstName().toLowerCase() + "@"
-                                    + contact.getLastName().toLowerCase() + ".com");
-                            contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
-                            contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
-                                    r.nextInt(11) + 1, r.nextInt(28) + 1));
-                            contact.setId(nextId++);
-                            contacts.put(contact.getId(), contact);
-                        }
-                    }
-                    instance = result;
-                }
-            }
-        }
-        return result;
+        return instance;
     }
 
-    public synchronized List<Contact> findAll(String stringFilter) {
+    public List<Contact> findAll(String stringFilter) {
         var filteredContacts = new ArrayList<Contact>();
         for (var contact : contacts.values()) {
             boolean passesFilter = (stringFilter == null || stringFilter.isEmpty())
@@ -71,17 +65,17 @@ public class ContactService {
         return filteredContacts;
     }
 
-    public synchronized long count() {
+    public long count() {
         return contacts.size();
     }
 
-    public synchronized void delete(Contact value) {
+    public void delete(Contact value) {
         contacts.remove(value.getId());
     }
 
-    public synchronized void save(Contact entry) {
+    public void save(Contact entry) {
         if (entry.getId() == null) {
-            entry.setId(nextId++);
+            entry.setId(nextId.getAndIncrement());
         }
         contacts.put(entry.getId(), entry);
     }

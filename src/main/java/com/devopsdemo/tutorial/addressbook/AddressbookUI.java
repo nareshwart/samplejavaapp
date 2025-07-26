@@ -39,16 +39,28 @@ public class AddressbookUI extends VerticalLayout {
     }
 
     private void configureComponents() {
-        newContact.addClickListener(e -> contactForm.edit(new Contact()));
+        // Configure the new contact button
+        newContact.addClickListener(e -> {
+            contactForm.edit(new Contact());
+            contactForm.setVisible(true);
+        });
 
+        // Configure the filter
         filter.setPlaceholder("Filter contacts...");
         filter.addValueChangeListener(e -> refreshContacts(e.getValue()));
 
-        contactList.setColumns("firstName", "lastName", "email");
+        // Configure the grid
+        contactList.setColumns("firstName", "lastName", "email", "phone");
         contactList.setSelectionMode(Grid.SelectionMode.SINGLE);
-        contactList.asSingleSelect().addValueChangeListener(
-                e -> contactForm.edit(e.getValue()));
+        contactList.asSingleSelect().addValueChangeListener(e -> {
+            Contact selected = e.getValue();
+            contactForm.setVisible(selected != null);
+            if (selected != null) {
+                contactForm.edit(selected);
+            }
+        });
 
+        // Initial load of contacts
         refreshContacts();
     }
 
