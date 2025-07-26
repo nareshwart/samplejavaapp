@@ -21,30 +21,31 @@ public class ContactService {
             "Thompson", "Young", "King", "Robinson" };
 
     private static ContactService instance;
+    private static final Map<Long, Contact> contacts = new HashMap<>();
+    private static long nextId = 0;
 
     public static ContactService createDemoService() {
         if (instance == null) {
-            final ContactService contactService = new ContactService();
-
-            var r = new Random(0);
-            for (int i = 0; i < 100; i++) {
-                var contact = new Contact();
-                contact.setFirstName(fnames[r.nextInt(fnames.length)]);
-                contact.setLastName(lnames[r.nextInt(fnames.length)]);
-                contact.setEmail(contact.getFirstName().toLowerCase() + "@"
-                        + contact.getLastName().toLowerCase() + ".com");
-                contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
-                contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
-                        r.nextInt(11) + 1, r.nextInt(28) + 1));
-                contactService.save(contact);
+            instance = new ContactService();
+            
+            // Initialize demo data only if the contacts map is empty
+            if (contacts.isEmpty()) {
+                var r = new Random(0);
+                for (int i = 0; i < 100; i++) {
+                    var contact = new Contact();
+                    contact.setFirstName(fnames[r.nextInt(fnames.length)]);
+                    contact.setLastName(lnames[r.nextInt(fnames.length)]);
+                    contact.setEmail(contact.getFirstName().toLowerCase() + "@"
+                            + contact.getLastName().toLowerCase() + ".com");
+                    contact.setPhone("+ 358 555 " + (100 + r.nextInt(900)));
+                    contact.setBirthDate(LocalDate.of(1930 + r.nextInt(70),
+                            r.nextInt(11) + 1, r.nextInt(28) + 1));
+                    instance.save(contact);
+                }
             }
-            instance = contactService;
         }
         return instance;
     }
-
-    private static final Map<Long, Contact> contacts = new HashMap<>();
-    private static long nextId = 0;
 
     public synchronized List<Contact> findAll(String stringFilter) {
         var filteredContacts = new ArrayList<Contact>();
